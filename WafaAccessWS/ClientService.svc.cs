@@ -8,6 +8,7 @@ using System.Diagnostics;
 using WafaAccessWS.Models;
 using System.Threading.Tasks;
 using WafaAccessWS.Utils;
+using System.Globalization;
 
 namespace WafaAccessWS
 {
@@ -15,7 +16,7 @@ namespace WafaAccessWS
     [ServiceBehavior(Namespace = Constantes.Namespace)]
     public class ClientService : IClientService
     {
-     /*   public Client GetClientInfo(string login, string filialeId, string ribCompte, string timestamp, string wsSignature)
+        public Client GetClientInfo(string login, string filialeId, string ribCompte, string timestamp, string wsSignature)
         {
             //On instancie le repository
             AuditlogRepository auditlogdb = new AuditlogRepository();
@@ -24,28 +25,126 @@ namespace WafaAccessWS
             {
                 Debug.WriteLine("values recues : timestamp= " + timestamp + ", ribCompte= " + ribCompte + ", login= " + login + ", filialeId= " + filialeId + ", timestamp= " + timestamp);
 
-                //On instancie le repository
-                ClientEntityRepository db = new ClientEntityRepository();
+                //TODO check if date timestamp valid format
+                //TODO check if wsSignature valid base64
 
-                var ClientEntity = db.Find(ribCompte);
-                if (ClientEntity != null)
-                {
-                    //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientEntity.p_errorCode, ClientEntity.p_returnCode, ClientEntity.p_returnMessage); });
-
-                    return TranslateClientEntityToClient(ClientEntity);
-                }
-                else
-                {
+                //on verifie que le timestamp est correct
+             /*   string dateformat = "yyyyMMddhhmm";
+                DateTime dateTime;
+                if (string.IsNullOrWhiteSpace(timestamp) || DateTime.TryParseExact(timestamp, dateformat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime)==false) {
                     var ClientError = new Client();
                     ClientError.returnCode = "1";
                     ClientError.errorCode = "99";
-                    ClientError.returnMessage = "Probleme inattendu survenu";
+                    ClientError.returnMessage = "Timestamp absent ou incorrect";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
                     Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
+                }*/
+
+
+                //on verifie que filialeid est correct 
+                if (string.IsNullOrWhiteSpace(filialeId))
+                {
+                    var ClientError = new Client();
+                    ClientError.returnCode = "1";
+                    ClientError.errorCode = "99";
+                    ClientError.returnMessage = "Filiale absente";
+
+                    //On declenche une tache de sauvegarde de l'action en parallele
+                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+
+                    return ClientError;
+                }
+                Debug.WriteLine("after check timestamp");
+
+                //on verifie d'abord le rib.
+                //il est obligatoire, et doit avoir au moins 23 caracteres
+                if (string.IsNullOrWhiteSpace(ribCompte))
+                {
+                    var ClientError = new Client();
+                    ClientError.returnCode = "1";
+                    ClientError.errorCode = "01";
+                    ClientError.returnMessage = "Le rib est manquant";
+
+                    //On declenche une tache de sauvegarde de l'action en parallele
+                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+
+                    return ClientError;
+                }
+                if (ribCompte.Length < 23)
+                {
+                    var ClientError = new Client();
+                    ClientError.returnCode = "1";
+                    ClientError.errorCode = "02";
+                    ClientError.returnMessage = "Rib taille inférieure à 23 digits";
+
+                    //On declenche une tache de sauvegarde de l'action en parallele
+                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+
+                    return ClientError;
+                }
+
+                //on verifie la presence du login
+                if (string.IsNullOrWhiteSpace(login) || login == "null")
+                {
+                    var ClientError = new Client();
+                    ClientError.returnCode = "1";
+                    ClientError.errorCode = "10";
+                    ClientError.returnMessage = "Login invalide";
+
+                    //On declenche une tache de sauvegarde de l'action en parallele
+                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+
+                    return ClientError;
+                }
+                /*
+                 * on verifie ensuite la signature
+                 */
+                //on concatene les valeurs reçues (sauf la signature)
+                String dataSeed = timestamp + "+" + ribCompte + "+" + login + "+" + filialeId;
+                //on signe le string trouvé
+                String wsSignatureGenerated = ToolsService.createSignature(dataSeed);
+                //on compare notre signature avec celle envoyée
+                bool verif = ToolsService.Verify(wsSignatureGenerated, wsSignature);
+                if (verif == false)
+                {
+                    var ClientError = new Client();
+                    ClientError.returnCode = "1";
+                    ClientError.errorCode = "10";
+                    ClientError.returnMessage = "Signature invalide";
+
+                    //On declenche une tache de sauvegarde de l'action en parallele
+                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+
+                    return ClientError;
+                }
+                else
+                {
+                    //On instancie le repository
+                    ClientEntityRepository db = new ClientEntityRepository();
+
+                    var ClientEntity = db.Find(ribCompte);
+                    if (ClientEntity != null)
+                    {
+                        //On declenche une tache de sauvegarde de l'action en parallele
+                        Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientEntity.p_errorCode, ClientEntity.p_returnCode, ClientEntity.p_returnMessage); });
+
+                        return TranslateClientEntityToClient(ClientEntity);
+                    }
+                    else
+                    {
+                        var ClientError = new Client();
+                        ClientError.returnCode = "1";
+                        ClientError.errorCode = "99";
+                        ClientError.returnMessage = "Probleme inattendu survenu";
+
+                        //On declenche une tache de sauvegarde de l'action en parallele
+                        Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+
+                        return ClientError;
+                    }
                 }
             }
             catch (Exception ex)
@@ -62,7 +161,7 @@ namespace WafaAccessWS
 
                 return ClientError;
             }
-        }*/
+        }
 
 
         private Client TranslateClientEntityToClient(ClientEntity ClientEntity)
@@ -98,7 +197,7 @@ namespace WafaAccessWS
 
 
         //methode juste pr tester la signature
-        public Client GetClientInfo(string login, string filialeId, string ribCompte, string timestamp, string wsSignature)
+        public Client GetClientInfo1(string login, string filialeId, string ribCompte, string timestamp, string wsSignature)
         {
             Debug.WriteLine("values recues : timestamp= " + timestamp + ", ribCompte= " + ribCompte + ", login= " + login + ", filialeId= " + filialeId + ", timestamp= " + timestamp);
 
@@ -114,7 +213,7 @@ namespace WafaAccessWS
             bool verif = ToolsService.Verify(wsSignatureGenerated, signed);
 
 
-            
+
 
             Debug.WriteLine("wsSignature verif = " + verif);
 
