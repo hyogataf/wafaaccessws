@@ -31,3 +31,5 @@ $tf*/
 #Ignore files build by Visual Studio
 *.dll 
 *.crt
+*.dll
+*.txt

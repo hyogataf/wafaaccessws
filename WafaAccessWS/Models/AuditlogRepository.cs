@@ -7,31 +7,31 @@ using System.Data;
 
 namespace WafaAccessWS.Models
 {
-    public class AuditlogRepository
+    public class WAFAAuditlogRepository
     {
         WafaaccessContext context = new WafaaccessContext();
 
-        public IQueryable<Auditlog> All
+        public IQueryable<WAFAAuditlog> All
         {
-            get { return context.Auditlog; }
+            get { return context.WAFAAuditlog; }
         }
 
-        public Auditlog Find(long id)
+        public WAFAAuditlog Find(long id)
         {
-            return context.Auditlog.Find(id);
+            return context.WAFAAuditlog.Find(id);
         }
 
-        public void InsertOrUpdate(Auditlog Auditlog)
+        public void InsertOrUpdate(WAFAAuditlog WAFAAuditlog)
         {
-            if (Auditlog.AuditlogId == default(long))
+            if (WAFAAuditlog.WAFAAuditlogId == default(long))
             {
                 // New entity
-                context.Auditlog.Add(Auditlog);
+                context.WAFAAuditlog.Add(WAFAAuditlog);
             }
             else
             {
                 // Existing entity
-                context.Entry(Auditlog).State = EntityState.Modified;
+                context.Entry(WAFAAuditlog).State = EntityState.Modified;
             }
         }
 
@@ -42,19 +42,19 @@ namespace WafaAccessWS.Models
 
         public void Create(string action, string userAction, string login, string filialeId, string ribCompte, string timestamp, string wsSignature, string errorCode, int? returnCode, string returnMessage)
         {
-            var Auditlog = new Auditlog();
-            Auditlog.Action = action;
-            Auditlog.DateAction = DateTime.Now;
-            Auditlog.login = login;
-            Auditlog.filialeId = filialeId;
-            Auditlog.ribCompte = ribCompte;
-            Auditlog.timestamp = timestamp;
-            Auditlog.wsSignature = wsSignature;
-            Auditlog.returnCode = returnCode;
-            Auditlog.errorCode = errorCode;
-            Auditlog.returnMessage = returnMessage;
-            Auditlog.UserAction = userAction;
-            InsertOrUpdate(Auditlog);
+            var WAFAAuditlog = new WAFAAuditlog();
+            WAFAAuditlog.Action = action;
+            WAFAAuditlog.DateAction = DateTime.Now;
+            WAFAAuditlog.login = login;
+            WAFAAuditlog.filialeId = filialeId;
+            WAFAAuditlog.ribCompte = ribCompte;
+            WAFAAuditlog.timestamp = timestamp;
+            WAFAAuditlog.wsSignature = wsSignature;
+            WAFAAuditlog.returnCode = returnCode;
+            WAFAAuditlog.errorCode = errorCode;
+            WAFAAuditlog.returnMessage = returnMessage;
+            WAFAAuditlog.UserAction = userAction;
+            InsertOrUpdate(WAFAAuditlog);
             Save();
         }
 
@@ -67,13 +67,13 @@ namespace WafaAccessWS.Models
     }
 
 
-    public interface IAuditlogRepository : IDisposable
+    public interface IWAFAAuditlogRepository : IDisposable
     {
-        IQueryable<Auditlog> All { get; }
-        //  IQueryable<Auditlog> AllIncluding(params Expression<Func<Auditlog, object>>[] includeProperties);
-        Auditlog Find(long id);
-        IQueryable<Auditlog> FindByRequest(long id);
-        void InsertOrUpdate(Auditlog Auditlog);
+        IQueryable<WAFAAuditlog> All { get; }
+        //  IQueryable<WAFAAuditlog> AllIncluding(params Expression<Func<WAFAAuditlog, object>>[] includeProperties);
+        WAFAAuditlog Find(long id);
+        IQueryable<WAFAAuditlog> FindByRequest(long id);
+        void InsertOrUpdate(WAFAAuditlog WAFAAuditlog);
         void Create(string action, string userAction, string login, string filialeId, string ribCompte, string timestamp, string wsSignature, string errorCode, int? returnCode, string returnMessage);
         //  void Delete(long id);
         void Save();

@@ -19,17 +19,16 @@ namespace WafaAccessWS
         public Client GetClientInfo(string login, string filialeId, string ribCompte, string timestamp, string wsSignature)
         {
             //On instancie le repository
-            AuditlogRepository auditlogdb = new AuditlogRepository();
+            WAFAAuditlogRepository WAFAAuditlogdb = new WAFAAuditlogRepository();
 
             try
             {
                 Debug.WriteLine("values recues : timestamp= " + timestamp + ", ribCompte= " + ribCompte + ", login= " + login + ", filialeId= " + filialeId + ", timestamp= " + timestamp);
-
-                //TODO check if date timestamp valid format
+                 
                 //TODO check if wsSignature valid base64
 
-                //on verifie que le timestamp est correct
-             /*   string dateformat = "yyyyMMddhhmm";
+               //on verifie que le timestamp est correct
+               string dateformat = "yyyyMMddHHmm";
                 DateTime dateTime;
                 if (string.IsNullOrWhiteSpace(timestamp) || DateTime.TryParseExact(timestamp, dateformat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime)==false) {
                     var ClientError = new Client();
@@ -38,10 +37,10 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Timestamp absent ou incorrect";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
-                }*/
+                }
 
 
                 //on verifie que filialeid est correct 
@@ -53,13 +52,12 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Filiale absente";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
-                }
-                Debug.WriteLine("after check timestamp");
+                } 
 
-                //on verifie d'abord le rib.
+                //on verifie le rib.
                 //il est obligatoire, et doit avoir au moins 23 caracteres
                 if (string.IsNullOrWhiteSpace(ribCompte))
                 {
@@ -69,7 +67,7 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Le rib est manquant";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
                 }
@@ -81,7 +79,7 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Rib taille inférieure à 23 digits";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
                 }
@@ -95,7 +93,7 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Login invalide";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
                 }
@@ -116,7 +114,7 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Signature invalide";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
                 }
@@ -129,7 +127,7 @@ namespace WafaAccessWS
                     if (ClientEntity != null)
                     {
                         //On declenche une tache de sauvegarde de l'action en parallele
-                        Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientEntity.p_errorCode, ClientEntity.p_returnCode, ClientEntity.p_returnMessage); });
+                        Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientEntity.p_errorCode, ClientEntity.p_returnCode, ClientEntity.p_returnMessage); });
 
                         return TranslateClientEntityToClient(ClientEntity);
                     }
@@ -141,7 +139,7 @@ namespace WafaAccessWS
                         ClientError.returnMessage = "Probleme inattendu survenu";
 
                         //On declenche une tache de sauvegarde de l'action en parallele
-                        Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                        Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                         return ClientError;
                     }
@@ -157,7 +155,7 @@ namespace WafaAccessWS
                 ClientError.returnMessage = "Probleme inattendu survenu";
 
                 //On declenche une tache de sauvegarde de l'action en parallele
-                Task.Factory.StartNew(() => { auditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                 return ClientError;
             }

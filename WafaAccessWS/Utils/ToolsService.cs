@@ -42,7 +42,7 @@ namespace WafaAccessWS.Utils
             catch (Exception e)
             {
                 Debug.WriteLine("ToolsService Verify signature = " + e.StackTrace);
-                throw;
+                return false;
             }
         }
 
@@ -277,16 +277,16 @@ namespace WafaAccessWS.Utils
             my.Open(OpenFlags.ReadOnly);
 
             // Find the certificate we'll use to sign            
-         //   RSACryptoServiceProvider csp = null;
-          /*  foreach (X509Certificate2 cert in my.Certificates)
-            {
-                if (cert.Subject.Contains(certSubject))
-                {
-                    // We found it. 
-                    // Get its associated CSP and private key
-                    csp = (RSACryptoServiceProvider)cert.PrivateKey;
-                }
-            }*/
+            //   RSACryptoServiceProvider csp = null;
+            /*  foreach (X509Certificate2 cert in my.Certificates)
+              {
+                  if (cert.Subject.Contains(certSubject))
+                  {
+                      // We found it. 
+                      // Get its associated CSP and private key
+                      csp = (RSACryptoServiceProvider)cert.PrivateKey;
+                  }
+              }*/
             var path = Path.Combine(HttpRuntime.AppDomainAppPath, "Contents/sigca.crt");
             X509Certificate2 cert = new X509Certificate2(path);
             RSACryptoServiceProvider csp = (RSACryptoServiceProvider)cert.PrivateKey;
@@ -306,7 +306,7 @@ namespace WafaAccessWS.Utils
             return csp.SignHash(hash, CryptoConfig.MapNameToOID("SHA1"));
         }
 
-    } 
+    }
 
 
 

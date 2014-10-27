@@ -19,13 +19,13 @@ namespace WafaAccessWS.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ClientEntity>().ToTable("CLIENTENTITY", "BANK");
-            modelBuilder.Entity<Auditlog>().ToTable("AUDITLOG", "BANK");
+            modelBuilder.Entity<WAFAAuditlog>().ToTable("WAFAAUDITLOG", "BANK");
             // modelBuilder.Conventions.Remove<ColumnTypeCasingConvention>();
 
         }
 
         public DbSet<WafaAccessWS.Models.ClientEntity> ClientEntity { get; set; }
 
-        public DbSet<WafaAccessWS.Models.Auditlog> Auditlog { get; set; }
+        public DbSet<WafaAccessWS.Models.WAFAAuditlog> WAFAAuditlog { get; set; }
     }
 }

@@ -6,11 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WafaAccessWS.Models
 {
-    public class Auditlog
+    public class WAFAAuditlog
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] //  champ autogeneré dans la bdd
-        [Column("AUDITLOGID")]
-        public long AuditlogId { get; set; }
+        [Column("WAFAAUDITLOGID")]
+        public long WAFAAuditlogId { get; set; }
 
         [Column("ACTION")]
         public string Action { get; set; } //READ
