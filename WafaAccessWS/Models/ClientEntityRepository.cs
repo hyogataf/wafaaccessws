@@ -147,9 +147,9 @@ namespace WafaAccessWS.Models
                       command.Parameters.Add(ReturnValue);*/
 
                 command.ExecuteNonQuery();
-                Debug.WriteLine("OutParamReturnMsg Value = " + OutParamReturnMsg.Value);
-                Debug.WriteLine("command OutParamReturnMsg = " + command.Parameters["P_RETURN_MSG"].Value);
-                Debug.WriteLine("command OutParamDateNaissance = " + OutParamDateNaissance.Value);
+                //Debug.WriteLine("OutParamReturnMsg Value = " + OutParamReturnMsg.Value);
+                //Debug.WriteLine("command OutParamReturnMsg = " + command.Parameters["P_RETURN_MSG"].Value);
+                //Debug.WriteLine("command OutParamDateNaissance = " + OutParamDateNaissance.Value);
 
                 //Construction du ClientEntity à retourner
                 IFormatProvider culture = new System.Globalization.CultureInfo("fr-FR", true);

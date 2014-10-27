@@ -87,7 +87,7 @@
     <Compile Include="Constantes.cs" />
     <Compile Include="IClientService.cs" />
     <Compile Include="Models\WAFAAuditlog.cs" />
-    <Compile Include="Models\AuditlogRepository.cs" />
+    <Compile Include="Models\WAFAAuditlogRepository.cs" />
     <Compile Include="Models\ClientEntity.cs" />
     <Compile Include="Models\ClientEntityRepository.cs" />
     <Compile Include="Models\WafaaccessContext.cs" />
