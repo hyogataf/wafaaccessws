@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
+using System.Configuration;
 
 namespace WafaAccessWS.Utils
 {
@@ -15,7 +16,8 @@ namespace WafaAccessWS.Utils
         private const int PAD_LIMIT = 8192;
 
         public const string SEPARATOR = "+";
-        const string key = "54421341544545467678789459000024554664";
+        // const string key = "54421341544545467678789459000024554664";
+        // public string keyApp = ConfigurationManager.AppSettings["AppKey"];
 
 
         //Verify(Text_A_Signer_Puis_Verifier, Element_De_Comparaison)
@@ -49,10 +51,15 @@ namespace WafaAccessWS.Utils
 
         public static String createSignature(String data)
         {
-
-            string toSign = data + SEPARATOR + key;
+           // Debug.WriteLine(" keyApp = " + getKey());
+            string toSign = data + SEPARATOR + getKey();
             return encode(toSign);
 
+        }
+
+        public static string getKey()
+        {
+            return ConfigurationManager.AppSettings["AppKey"];
         }
 
 
