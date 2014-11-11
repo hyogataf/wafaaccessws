@@ -23,7 +23,7 @@ namespace WafaAccessWS
 
             try
             {
-                Debug.WriteLine("values recues : timestamp= " + timestamp + ", ribCompte= " + ribCompte + ", login= " + login + ", filialeId= " + filialeId + ", timestamp= " + timestamp);
+                Debug.WriteLine("params : timestamp= " + timestamp + ", ribCompte= " + ribCompte + ", login= " + login + ", filialeId= " + filialeId + ", timestamp= " + timestamp);
                  
                 //TODO check if wsSignature valid base64
 
@@ -114,7 +114,8 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Signature invalide";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() => { 
+                        WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
                 }

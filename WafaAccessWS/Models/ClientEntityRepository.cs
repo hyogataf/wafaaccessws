@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using Oracle.ManagedDataAccess.Client;
 using System.Data;
+//using Oracle.DataAccess.Client;
 
 namespace WafaAccessWS.Models
 {

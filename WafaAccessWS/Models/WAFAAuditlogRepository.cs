@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Linq.Expressions;
 using System.Data;
+using System.Diagnostics;
 
 namespace WafaAccessWS.Models
 {
@@ -42,20 +43,28 @@ namespace WafaAccessWS.Models
 
         public void Create(string action, string userAction, string login, string filialeId, string ribCompte, string timestamp, string wsSignature, string errorCode, int? returnCode, string returnMessage)
         {
-            var WAFAAuditlog = new WAFAAuditlog();
-            WAFAAuditlog.Action = action;
-            WAFAAuditlog.DateAction = DateTime.Now;
-            WAFAAuditlog.login = login;
-            WAFAAuditlog.filialeId = filialeId;
-            WAFAAuditlog.ribCompte = ribCompte;
-            WAFAAuditlog.timestamp = timestamp;
-            WAFAAuditlog.wsSignature = wsSignature;
-            WAFAAuditlog.returnCode = returnCode;
-            WAFAAuditlog.errorCode = errorCode;
-            WAFAAuditlog.returnMessage = returnMessage;
-            WAFAAuditlog.UserAction = userAction;
-            InsertOrUpdate(WAFAAuditlog);
-            Save();
+            try
+            {
+                var WAFAAuditlog = new WAFAAuditlog();
+                WAFAAuditlog.Action = action;
+                WAFAAuditlog.DateAction = DateTime.Now;
+                WAFAAuditlog.login = login;
+                WAFAAuditlog.filialeId = filialeId;
+                WAFAAuditlog.ribCompte = ribCompte;
+                WAFAAuditlog.timestamp = timestamp;
+                WAFAAuditlog.wsSignature = wsSignature;
+                WAFAAuditlog.returnCode = returnCode;
+                WAFAAuditlog.errorCode = errorCode;
+                WAFAAuditlog.returnMessage = returnMessage;
+                WAFAAuditlog.UserAction = userAction;
+
+                InsertOrUpdate(WAFAAuditlog);
+                Save();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(" Create exception = " + e.StackTrace);
+            }
         }
 
 

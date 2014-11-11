@@ -20,7 +20,7 @@ namespace WafaAccessWS.Models
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var schemaName = ConfigurationManager.AppSettings["schemaName"];
-            //Debug.WriteLine(" schemaName = " + schemaName);
+          //  Debug.WriteLine(" schemaName = " + schemaName);
 
             modelBuilder.Entity<ClientEntity>().ToTable("CLIENTENTITY", schemaName);
             modelBuilder.Entity<WAFAAuditlog>().ToTable("WAFAAUDITLOG", schemaName);
