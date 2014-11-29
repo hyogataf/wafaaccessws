@@ -159,10 +159,12 @@ namespace WafaAccessWS.Models
                 ClientEntity.p_sigle = OutParamSigle.Value.ToString();
                 ClientEntity.p_nom = OutParamNom.Value.ToString();
                 ClientEntity.p_prenom = OutParamPrenom.Value.ToString();
-                if (!string.IsNullOrEmpty(OutParamDateNaissance.Value.ToString()) && OutParamDateNaissance.Value.ToString() != "null")
+               /* if (!string.IsNullOrEmpty(OutParamDateNaissance.Value.ToString()) && OutParamDateNaissance.Value.ToString() != "null")
                 {
                     ClientEntity.p_dateNaissance = Convert.ToDateTime(OutParamDateNaissance.Value.ToString());
-                }
+                }*/
+                ClientEntity.p_dateNaissance = OutParamDateNaissance.Value.ToString();
+
                 ClientEntity.p_codeProfession = OutParamCodeProfession.Value.ToString();
                 ClientEntity.p_adresse1 = OutParamAdresse1.Value.ToString();
                 ClientEntity.p_adresse2 = OutParamAdresse2.Value.ToString();

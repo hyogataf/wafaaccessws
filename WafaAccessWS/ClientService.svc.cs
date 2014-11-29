@@ -24,13 +24,14 @@ namespace WafaAccessWS
             try
             {
                 Debug.WriteLine("params : timestamp= " + timestamp + ", ribCompte= " + ribCompte + ", login= " + login + ", filialeId= " + filialeId + ", timestamp= " + timestamp);
-                 
+
                 //TODO check if wsSignature valid base64
 
-               //on verifie que le timestamp est correct
-               string dateformat = "yyyyMMddHHmm";
+                //on verifie que le timestamp est correct
+                string dateformat = "yyyyMMddHHmm";
                 DateTime dateTime;
-                if (string.IsNullOrWhiteSpace(timestamp) || DateTime.TryParseExact(timestamp, dateformat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime)==false) {
+                if (string.IsNullOrWhiteSpace(timestamp) || DateTime.TryParseExact(timestamp, dateformat, CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime) == false)
+                {
                     var ClientError = new Client();
                     ClientError.returnCode = "1";
                     ClientError.errorCode = "99";
@@ -55,7 +56,7 @@ namespace WafaAccessWS
                     Task.Factory.StartNew(() => { WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
 
                     return ClientError;
-                } 
+                }
 
                 //on verifie le rib.
                 //il est obligatoire, et doit avoir au moins 23 caracteres
@@ -104,8 +105,14 @@ namespace WafaAccessWS
                 String dataSeed = timestamp + "+" + ribCompte + "+" + login + "+" + filialeId;
                 //on signe le string trouvé
                 String wsSignatureGenerated = ToolsService.createSignature(dataSeed);
+                Debug.WriteLine("wsSignatureGenerated = " + wsSignatureGenerated);
                 //on compare notre signature avec celle envoyée
-                bool verif = ToolsService.Verify(wsSignatureGenerated, wsSignature);
+
+                // On ne signe plus les données entrantes
+                //  bool verif = ToolsService.Verify(wsSignatureGenerated, wsSignature);
+
+                // A la place, on compare juste le hash obtenu (wsSignatureGenerated) au hash entrant
+                bool verif = ToolsService.VerifyHashes(wsSignatureGenerated, wsSignature);
                 if (verif == false)
                 {
                     var ClientError = new Client();
@@ -114,8 +121,10 @@ namespace WafaAccessWS
                     ClientError.returnMessage = "Signature invalide";
 
                     //On declenche une tache de sauvegarde de l'action en parallele
-                    Task.Factory.StartNew(() => { 
-                        WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage); });
+                    Task.Factory.StartNew(() =>
+                    {
+                        WAFAAuditlogdb.Create("READ", null, login, filialeId, ribCompte, timestamp, wsSignature, ClientError.errorCode, 1, ClientError.returnMessage);
+                    });
 
                     return ClientError;
                 }

@@ -23,7 +23,7 @@ namespace WafaAccessWS.Models
         public string p_prenom { get; set; }
 
         [Column("P_DATE_NAISSANCE")]
-        public DateTime? p_dateNaissance { get; set; } //yyyy-MM-dd
+        public string p_dateNaissance { get; set; } //yyyy-MM-dd
 
         [Column("P_CODE_PROFESSION")]
         public string p_codeProfession { get; set; }

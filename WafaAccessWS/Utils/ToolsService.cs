@@ -51,7 +51,7 @@ namespace WafaAccessWS.Utils
 
         public static String createSignature(String data)
         {
-           // Debug.WriteLine(" keyApp = " + getKey());
+            // Debug.WriteLine(" keyApp = " + getKey());
             string toSign = data + SEPARATOR + getKey();
             return encode(toSign);
 
@@ -231,11 +231,6 @@ namespace WafaAccessWS.Utils
         }
 
 
-
-
-
-
-
         public static string Sign(string text)
         {
             // Access Personal (MY) certificate store of current user
@@ -275,8 +270,6 @@ namespace WafaAccessWS.Utils
         }
 
 
-
-
         static byte[] SignOfficial(string text, string certSubject)
         {
             // Access Personal (MY) certificate store of current user
@@ -313,6 +306,25 @@ namespace WafaAccessWS.Utils
             return csp.SignHash(hash, CryptoConfig.MapNameToOID("SHA1"));
         }
 
+
+        public static bool VerifyHashes(string hashCalculated, string hashReceived)
+        {
+            bool IsOk = false;
+            if (string.IsNullOrWhiteSpace(hashCalculated) || string.IsNullOrWhiteSpace(hashReceived) || hashCalculated == "null" || hashReceived == "null")
+            {
+                return IsOk;
+            }
+
+            if (hashCalculated.Equals(hashReceived))
+            {
+                IsOk = true;
+            }
+            else
+            {
+                IsOk = false;
+            }
+            return IsOk;
+        }
     }
 
 
